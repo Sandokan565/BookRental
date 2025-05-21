@@ -10,7 +10,7 @@ app is avaliable at http://localhost/
 
 database is avaliable at http://localhost:8080/
 
-use my makefile to "up" and "down" container
+use my makefile to "up" and "down" containers
 
 make up
 

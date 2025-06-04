@@ -10,11 +10,6 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class AuthorRepository
 {
-    /**
-     * @param array $filters
-     * @param int|null $perPage
-     * @return LengthAwarePaginator|Collection
-     */
     public function getFilteredAuthors(array $filters, ?int $perPage = null): LengthAwarePaginator|Collection
     {
         $query = Author::withCount('books');

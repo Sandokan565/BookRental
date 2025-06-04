@@ -4,70 +4,41 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BookRequest;
 use App\Models\Book;
-use App\Repositories\BookRepository;
+use App\Services\BookService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
-    private const PER_PAGE = 20;
+    private BookService $bookService;
 
-    private BookRepository $bookRepository;
-
-    public function __construct(BookRepository $bookRepository) {
-        $this->bookRepository = $bookRepository;
+    public function __construct(BookService $bookService) {
+        $this->bookService = $bookService;
     }
 
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): JsonResponse
+    public function index(BookRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'title' => 'nullable|string|max:255',
-            'author_name' => 'nullable|string|max:255',
-            'is_borrowed' => 'nullable|in:0,1',
-            'perPage' => 'nullable|integer|min:1|max:100',
-        ]);
-
-        $filters = array_intersect_key($validated, array_flip(['title', 'author_name', 'is_borrowed']));
-
-        $books = $this->bookRepository->getFilteredBooks($filters, self::PER_PAGE);
-
-        return response()->json($books);
+        return response()->json($this->bookService->list($request->validated()), 200);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function store(BookRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'author_id' => 'required|integer|exists:authors,id',
-            'title' => 'required|string|max:255',
-            'is_borrowed' => 'required|boolean',
-        ]);
-
-        $book = Book::create($data);
-
-        return response()->json($book, 201);
+        return response()->json($this->bookService->create($request->validated()), 201);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Book $book): JsonResponse
+    public function update(BookRequest $request, Book $book): JsonResponse
     {
-        $data = $request->validate([
-            'author_id' => 'sometimes|required|int|exists:authors,id',
-            'title' => 'sometimes|required|string',
-            'is_borrowed' => 'sometimes|required|boolean',
-        ]);
-
-        $book->update($data);
-
-        return response()->json($book);
+        return response()->json($this->bookService->update($request->validated(), $book), 200);
     }
 
     /**
@@ -75,8 +46,6 @@ class BookController extends Controller
      */
     public function destroy(Book $book): JsonResponse
     {
-        $book->delete();
-
-        return response()->json($book);
+        return response()->json($this->bookService->delete($book), 200);
     }
 }

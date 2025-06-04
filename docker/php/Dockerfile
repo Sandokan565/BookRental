@@ -16,12 +16,6 @@ RUN apt-get update && apt-get install -y \
 # Install Composer globally
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Install Laravel Installer globally (COMMENT AFTER APP CREATION AND REBUILD)
-#RUN composer global require laravel/installer
-
-# Add Composer bin to PATH (COMMENT AFTER APP CREATION AND REBUILD)
-#ENV PATH="/root/.composer/vendor/bin:${PATH}"
-
 # Create a non-root user (APPLY AFTER APP CREATION AND REBUILD)
 RUN useradd -u 1000 -m tomas
 RUN chown -R tomas:www-data /var/www/html

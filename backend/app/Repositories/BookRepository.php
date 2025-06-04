@@ -11,11 +11,6 @@ use Illuminate\Support\Facades\DB;
 
 class BookRepository
 {
-    /**
-     * @param array $filters
-     * @param int|null $perPage
-     * @return Collection|LengthAwarePaginator
-     */
     public function getFilteredBooks(array $filters, ?int $perPage = null): LengthAwarePaginator|Collection
     {
         $query = Book::query()->join('authors', 'authors.id', '=', 'books.author_id');
